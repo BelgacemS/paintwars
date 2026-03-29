@@ -51,13 +51,13 @@ if images:
     output_dir = os.path.join('..', 'assets')
     os.makedirs(output_dir, exist_ok=True)
     output = os.path.join(output_dir, f'arena_{_arena_id}.gif')
-    # on prend 1 frame sur 2 pour reduire la taille du fichier
-    images_sampled = images[::2]
+    # on prend 1 frame sur 6 pour un GIF rapide et leger
+    images_sampled = images[::6]
     images_sampled[0].save(
         output,
         save_all=True,
         append_images=images_sampled[1:],
-        duration=80,
+        duration=40,
         loop=0,
         optimize=True
     )
