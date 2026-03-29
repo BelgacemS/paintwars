@@ -1,0 +1,9 @@
+venv/
+__pycache__/
+*.pyc
+.DS_Store
+*.tex
+*.pdf
+*.csv
+logs_ga_projet/
+_instructions_*
