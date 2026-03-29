@@ -1,8 +1,8 @@
-# Paint Wars 
+# Paint Wars
 
 Projet de L3 Informatique, UE IA & Jeux
 
-Le but : programmer une equipe de 4 robots autonomes qui doivent conquerir le plus de cases possible dans une arene, face a une equipe adverse. Les robots n'ont que leurs capteurs (distance aux obstacles, type, equipe) et **un seul entier** en memoire. Pas de communication entre eux, pas de carte.
+Le but : programmer une équipe de 4 robots autonomes qui doivent conquérir le plus de cases possible dans une arène, face à une équipe adverse. Les robots n'ont que leurs capteurs (distance aux obstacles, type, équipe) et **un seul entier** en mémoire. Pas de communication entre eux, pas de carte.
 
 ## Demo
 
@@ -10,43 +10,43 @@ Le but : programmer une equipe de 4 robots autonomes qui doivent conquerir le pl
 |---|---|---|
 | ![arena0](assets/arena_0.gif) | ![arena2](assets/arena_2.gif) | ![arena4](assets/arena_4.gif) |
 
-Rouge = equipe OMEGA, Bleu = adversaire. Les cases colorees montrent le territoire conquis.
+Rouge = équipe OMEGA, Bleu = adversaire. Les cases colorées montrent le territoire conquis.
 
 ## Approche
 
 ### Comportements Braitenberg
 
-5 comportements reactifs ou la rotation et la translation dependent directement des capteurs, sans if/else :
-- Evitement d'obstacles, attraction/repulsion des murs, attraction/repulsion des robots
+5 comportements réactifs où la rotation et la translation dépendent directement des capteurs, sans if/else :
+- Évitement d'obstacles, attraction/répulsion des murs, attraction/répulsion des robots
 
 ### Architecture de subsomption
 
-Combinaison de comportements avec priorites : eviter les murs > aller vers les robots > avancer tout droit.
+Combinaison de comportements avec priorités : éviter les murs > aller vers les robots > avancer tout droit.
 
-### Algorithme genetique
+### Algorithme génétique
 
 Optimisation des poids d'un perceptron (8 params) avec un (1+1)-ES :
-- Mutation d'un seul param par generation
-- Selection : l'enfant remplace le parent que s'il est meilleur ou egal
-- Chaque strategie est evaluee 3 fois pour eviter le bruit
-- J'ai aussi implemente une recherche aleatoire pour comparer
+- Mutation d'un seul param par génération
+- Sélection : l'enfant remplace le parent que s'il est meilleur ou égal
+- Chaque stratégie est évaluée 3 fois pour éviter le bruit
+- J'ai aussi implémenté une recherche aléatoire pour comparer
 
-### Strategie finale (equipe OMEGA)
+### Stratégie finale (équipe OMEGA)
 
-4 robots avec des roles differents :
+4 robots avec des rôles différents :
 
 | Robot | Role | Description |
 |-------|------|-------------|
-| 0 | Explorateur | Braitenberg avec un peu d'aleatoire pour bien couvrir |
-| 1 | Chasseur de couloirs | Detecte les couloirs et fonce tout droit dedans |
-| 2 | Infiltrateur | Navigation asymetrique avec oscillation sinusoidale |
-| 3 | Sweeper | Hand-tuned + perceptron optimise par l'algo genetique |
+| 0 | Explorateur | Braitenberg avec un peu d'aléatoire pour bien couvrir |
+| 1 | Chasseur de couloirs | Détecte les couloirs et fonce tout droit dedans |
+| 2 | Infiltrateur | Navigation asymétrique avec oscillation sinusoïdale |
+| 3 | Sweeper | Hand-tuned + perceptron optimisé par l'algo génétique |
 
 Tous les robots partagent :
-- Du **bit-packing** pour stocker 5 infos dans un seul entier (position precedente, etat, compteur de blocage, pas)
-- Une **detection de blocage** : si le robot bouge plus pendant 10 pas, il tourne pour se debloquer
-- Une **repulsion entre allies** pour pas explorer les memes zones
-- Une **poursuite des adversaires** quand ils sont detectes
+- Du **bit-packing** pour stocker 5 infos dans un seul entier (position précédente, état, compteur de blocage, pas)
+- Une **détection de blocage** : si le robot bouge plus pendant 10 pas, il tourne pour se débloquer
+- Une **répulsion entre alliés** pour pas explorer les mêmes zones
+- Une **poursuite des adversaires** quand ils sont détectés
 
 ## Structure du projet
 
@@ -54,22 +54,22 @@ Tous les robots partagent :
 ├── src/
 │   ├── tetracomposibot.py           # moteur de simulation (fourni)
 │   ├── robot.py                      # classe de base Robot (fourni)
-│   ├── robot_challenger.py           # strategie finale
-│   ├── robot_champion.py             # adversaire de reference (fourni)
-│   ├── arenas.py / arenas_eval.py    # arenes de jeu
+│   ├── robot_challenger.py           # stratégie finale
+│   ├── robot_champion.py             # adversaire de référence (fourni)
+│   ├── arenas.py / arenas_eval.py    # arènes de jeu
 │   ├── config*.py                    # fichiers de configuration
-│   ├── behaviors/                    # comportements reactifs
+│   ├── behaviors/                    # comportements réactifs
 │   │   ├── robot_braitenberg_*.py    # 5 comportements Braitenberg
 │   │   └── robot_subsomption.py      # architecture de subsomption
 │   └── optimization/                 # algorithmes d'optimisation
-│       ├── genetic_algorithms.py     # algo genetique (1+1)-ES
-│       ├── robot_randomsearch.py     # recherche aleatoire
-│       └── robot_randomsearch2.py    # recherche aleatoire amelioree
+│       ├── genetic_algorithms.py     # algo génétique (1+1)-ES
+│       ├── robot_randomsearch.py     # recherche aléatoire
+│       └── robot_randomsearch2.py    # recherche aléatoire améliorée
 ├── scripts/
-│   ├── go_tournament                 # tournoi sur 5 arenes
-│   └── go_tournament_eval            # tournoi complet sur 10 arenes
+│   ├── go_tournament                 # tournoi sur 5 arènes
+│   └── go_tournament_eval            # tournoi complet sur 10 arènes
 ├── utils/
-│   ├── plot_resultats.py             # visualisation des resultats
+│   ├── plot_resultats.py             # visualisation des résultats
 │   └── record_gif.py                 # enregistrement de GIFs
 └── assets/                           # GIFs de demo
 ```
@@ -83,7 +83,7 @@ pip install -r requirements.txt
 cd src
 python tetracomposibot.py config_Paintwars
 
-# Avec parametres : arene (0-4), position (True/False), vitesse (0=normal, 1=rapide, 2=sans affichage)
+# Avec paramètres : arène (0-4), position (True/False), vitesse (0=normal, 1=rapide, 2=sans affichage)
 python tetracomposibot.py config_Paintwars 1 False 1
 
 # Tournoi complet (depuis la racine du projet)
