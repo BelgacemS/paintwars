@@ -12,7 +12,7 @@ Le but : programmer une equipe de 4 robots autonomes qui doivent conquerir le pl
 
 Rouge = equipe OMEGA, Bleu = adversaire. Les cases colorees montrent le territoire conquis.
 
-## Ce que j'ai fait
+## Approche
 
 ### Comportements Braitenberg
 
