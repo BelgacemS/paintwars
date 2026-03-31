@@ -1,60 +1,61 @@
-# Paint Wars
+# Paint Wars - IA multi-agents
 
-Projet de L3 Informatique, UE IA & Jeux
+Variation compétitive du **problème de la patrouille multi-agents** : deux équipes de 4 robots s'affrontent pour conquérir un maximum de territoire dans des arènes variées.
 
-Le but : programmer une équipe de 4 robots autonomes qui doivent conquérir le plus de cases possible dans une arène, face à une équipe adverse. Les robots n'ont que leurs capteurs (distance aux obstacles, type, équipe) et **un seul entier** en mémoire. Pas de communication entre eux, pas de carte.
+Contrainte principale : chaque robot n'a accès qu'à ses **8 capteurs de distance** et dispose d'**un seul entier** en mémoire. Pas de communication, pas de carte, pas d'information globale.
 
-## Demo
+Projet réalisé dans le cadre de l'UE LU3IN025 (IA & Jeux, Sorbonne Université).
 
-| Arena 0 (ouverte) | Arena 2 (couloirs) | Arena 4 (labyrinthe) |
+## Aperçu
+
+| Arena ouverte | Arena couloirs | Arena X |
 |---|---|---|
-| ![arena0](assets/arena_0.gif) | ![arena2](assets/arena_2.gif) | ![arena4](assets/arena_4.gif) |
+| ![arena0](assets/arena_0.gif) | ![arena2](assets/arena_2.gif) | ![arena8](assets/arena_8.gif) |
 
-Rouge = équipe OMEGA, Bleu = adversaire. Les cases colorées montrent le territoire conquis.
+Bleu = notre bot, Rouge = adversaire de référence.
 
 ## Approche
 
 ### Comportements Braitenberg
 
-5 comportements réactifs où la rotation et la translation dépendent directement des capteurs, sans if/else :
-- Évitement d'obstacles, attraction/répulsion des murs, attraction/répulsion des robots
+5 comportements réactifs purs (pas de structure conditionnelle) : la sortie moteur est une somme pondérée des activations sensorielles. Implémentations : évitement d'obstacles, attraction/répulsion des murs, attraction/répulsion des robots.
 
 ### Architecture de subsomption
 
-Combinaison de comportements avec priorités : éviter les murs > aller vers les robots > avancer tout droit.
+Couche de priorités entre comportements : évitement de murs > poursuite de robots > exploration. Permet de combiner des comportements simples en un comportement global cohérent.
 
-### Algorithme génétique
+### Optimisation par algorithme génétique
 
-Optimisation des poids d'un perceptron (8 params) avec un (1+1)-ES :
-- Mutation d'un seul param par génération
-- Sélection : l'enfant remplace le parent que s'il est meilleur ou égal
-- Chaque stratégie est évaluée 3 fois pour éviter le bruit
-- J'ai aussi implémenté une recherche aléatoire pour comparer
+Recherche des poids optimaux d'un perceptron de contrôle (8 paramètres) via un (1+1)-ES :
+- Mutation d'un seul paramètre par génération
+- Sélection élitiste : remplacement seulement si le fils fait mieux ou égal
+- Évaluation moyennée sur 3 essais (orientations aléatoires) pour limiter le bruit
+- Comparaison empirique avec une baseline de recherche aléatoire
 
-### Stratégie finale (équipe OMEGA)
+### Stratégie finale
 
-4 robots avec des rôles différents :
+4 robots spécialisés avec une architecture hybride :
 
-| Robot | Role | Description |
-|-------|------|-------------|
-| 0 | Explorateur | Braitenberg avec un peu d'aléatoire pour bien couvrir |
-| 1 | Chasseur de couloirs | Détecte les couloirs et fonce tout droit dedans |
+| Robot | Rôle | Stratégie |
+|-------|------|-----------|
+| 0 | Explorateur | Braitenberg + biais aléatoire pour maximiser la couverture |
+| 1 | Chasseur de couloirs | Détection de passages étroits, accélération en ligne droite |
 | 2 | Infiltrateur | Navigation asymétrique avec oscillation sinusoïdale |
-| 3 | Sweeper | Hand-tuned + perceptron optimisé par l'algo génétique |
+| 3 | Sweeper | Comportement hand-tuned + perceptron optimisé par AG |
 
-Tous les robots partagent :
-- Du **bit-packing** pour stocker 5 infos dans un seul entier (position précédente, état, compteur de blocage, pas)
-- Une **détection de blocage** : si le robot bouge plus pendant 10 pas, il tourne pour se débloquer
-- Une **répulsion entre alliés** pour pas explorer les mêmes zones
-- Une **poursuite des adversaires** quand ils sont détectés
+Mécanismes partagés entre les 4 robots :
+- **Bit-packing** : 5 variables (position précédente, état, compteur de blocage, compteur de pas) encodées dans un seul entier via des masques et shifts binaires
+- **Détection de blocage** : rotation d'échappement si le robot est immobile pendant 10 pas consécutifs
+- **Répulsion entre alliés** : force répulsive proportionnelle à la distance pour diversifier l'exploration
+- **Poursuite d'adversaires** : réorientation vers l'ennemi le plus proche quand il est détecté
 
 ## Structure du projet
 
 ```
 ├── src/
+│   ├── robot_challenger.py           # stratégie finale
 │   ├── tetracomposibot.py           # moteur de simulation (fourni)
 │   ├── robot.py                      # classe de base Robot (fourni)
-│   ├── robot_challenger.py           # stratégie finale
 │   ├── robot_champion.py             # adversaire de référence (fourni)
 │   ├── arenas.py / arenas_eval.py    # arènes de jeu
 │   ├── config*.py                    # fichiers de configuration
